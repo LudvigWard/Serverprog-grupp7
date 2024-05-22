@@ -1,26 +1,24 @@
 package se.yrgo.domain;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Customer {
+    // OBS, ID ska vara kundens personnummer!
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long customerId;
 
     private String customerName;
     private String email;
     private String mobileNum;
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCustomerId(Long id) {
+        this.customerId = id;
     }
 
-    public Long getId() {
-        return id;
+    public Long getCustomerId() {
+        return customerId;
     }
 
     public String getCustomerName() {
