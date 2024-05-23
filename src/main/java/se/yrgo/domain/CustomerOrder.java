@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class CustomerOrder {
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private Long orderId;
 
