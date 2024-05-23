@@ -1,17 +1,25 @@
 package se.yrgo.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Customer {
-    // OBS, ID ska vara kundens personnummer!
+    // ID should be the customer's person/social security number!
     @Id
     private Long customerId;
 
     private String customerName;
     private String email;
     private String mobileNum;
+
+    public Customer() {}
+
+    public Customer(Long customerId, String customerName, String email, String mobileNum) {
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.email = email;
+        this.mobileNum = mobileNum;
+    }
 
     public void setCustomerId(Long id) {
         this.customerId = id;
@@ -41,7 +49,15 @@ public class Customer {
         return mobileNum;
     }
 
-    public void setMobileNum(String phoneNumber) {
-        this.mobileNum = phoneNumber;
+    public void setMobileNum(String mobileNum) {
+        this.mobileNum = mobileNum;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer ID: " + customerId + "\n" +
+                "Customer name: " + customerName + "\n" +
+                "Customer email: " + email + "\n" +
+                "Customer mobile number: " + mobileNum + "\n";
     }
 }
