@@ -12,14 +12,19 @@ import se.yrgo.domain.*;
 @RestController
 public class MainRestController {
 
+    private final CustomerRepo customerData;
+    private final CustomerOrderRepo customerOrderData;
+    private final OrderProductRepo orderProductData;
+    private final ProductRepo productData;
+
     @Autowired
-    private CustomerRepo customerData;
-    @Autowired
-    private CustomerOrderRepo customerOrderData;
-    @Autowired
-    private OrderProductRepo orderProductData;
-    @Autowired
-    private ProductRepo productData;
+    public MainRestController(CustomerRepo customerData, CustomerOrderRepo customerOrderData,
+            OrderProductRepo orderProductData, ProductRepo productData) {
+        this.customerData = customerData;
+        this.customerOrderData = customerOrderData;
+        this.orderProductData = orderProductData;
+        this.productData = productData;
+    }
 
     @RequestMapping("/customers")
     public CustomerList allCustomers() {
@@ -39,7 +44,7 @@ public class MainRestController {
         return new CustOrderList(all);
     }
 
-    @RequestMapping(value = "/customerOrders", method = RequestMethod.POST)
+    @PostMapping("/orderProducts")
     public ResponseEntity<CustomerOrder> createNewCustOrder(@RequestBody CustomerOrder customerOrder) {
         customerOrderData.save(customerOrder);
         return new ResponseEntity<>(customerOrder, HttpStatus.CREATED);
@@ -51,7 +56,7 @@ public class MainRestController {
         return new OrderProductList(all);
     }
 
-    @RequestMapping(value = "/orderProducts", method = RequestMethod.POST)
+    @PostMapping("/orderProducts")
     public ResponseEntity<OrderProduct> createNewOrderProduct(@RequestBody OrderProduct orderProduct) {
         orderProductData.save(orderProduct);
         return new ResponseEntity<>(orderProduct, HttpStatus.CREATED);
@@ -63,7 +68,7 @@ public class MainRestController {
         return new ProductList(all);
     }
 
-    @RequestMapping(value = "/products", method = RequestMethod.POST)
+    @PostMapping("/products")
     public ResponseEntity<Product> createNewProduct(@RequestBody Product product) {
         productData.save(product);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
