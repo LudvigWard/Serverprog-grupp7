@@ -32,7 +32,7 @@ public class MainRestController {
         return new CustomerList(all);
     }
 
-    @RequestMapping(value = "/customers", method = RequestMethod.POST)
+    @PostMapping("/customers")
     public ResponseEntity<Customer> createNewCustomer(@RequestBody Customer customer) {
         customerData.save(customer);
         return new ResponseEntity<>(customer, HttpStatus.CREATED);
