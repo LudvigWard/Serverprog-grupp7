@@ -44,7 +44,7 @@ public class MainRestController {
         return new CustOrderList(all);
     }
 
-    @PostMapping("/orderProducts")
+    @PostMapping("/customerOrders")
     public ResponseEntity<CustomerOrder> createNewCustOrder(@RequestBody CustomerOrder customerOrder) {
         customerOrderData.save(customerOrder);
         return new ResponseEntity<>(customerOrder, HttpStatus.CREATED);
