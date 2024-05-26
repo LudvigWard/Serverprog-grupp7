@@ -23,6 +23,10 @@ public class OrderProduct {
         this.product = product;
     }
 
+    public Long getOrderProductId() {
+        return orderProductId;
+    }
+
     public CustomerOrder getCustomerOrder() {
         return customerOrder;
     }
