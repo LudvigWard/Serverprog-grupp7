@@ -78,14 +78,19 @@ public class MainRestController {
 
     @PostMapping("/addOrderProduct")
     public ResponseEntity<OrderProduct> createNewOrderProduct(@RequestBody OrderProduct orderProduct) {
-        customerOrderData.save(orderProduct.getCustomerOrder());
+
+        Long orderId = orderProduct.getCustomerOrder().getOrderId();
+        CustomerOrder customerOrder = customerOrderData.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CustomerOrder not found"));
 
         String productName = orderProduct.getProduct().getProductName();
         Product product = productData.findByProductName(productName);
 
-        OrderProduct newOrderProduct = new OrderProduct(orderProduct.getCustomerOrder(), product);
+
+        OrderProduct newOrderProduct = new OrderProduct(customerOrder, product);
 
         orderProductData.save(orderProduct);
+        
         return new ResponseEntity<>(newOrderProduct, HttpStatus.CREATED);
     }
 
