@@ -48,6 +48,30 @@ public class MainRestController {
         }
     }
 
+    @PostMapping("/addCompleteOrder") //for this to be valid the customer data and the product data need to already exist in the database
+    public ResponseEntity<CompleteOrder> createNewCompleteOrder(@RequestBody CompleteOrder completeOrder) {
+        
+        // Create a new customer object using the retrieved customerId from the completeOrder-object
+        Long customerId = completeOrder.getCustomerId();
+        Customer customer = customerData.findById(customerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+
+        // Create a new customerOrder using the customer object, and save this to the database
+        CustomerOrder newOrder = new CustomerOrder(customer);
+        customerOrderData.save(newOrder);
+
+        // Find the products using the retrieved productName from the completeOrder-object. Then add these to the OrderProduct table along with the unique CustomerOrder
+        for (String productName : completeOrder.getProductNames()) {
+            Product product = productData.findByProductName(productName);
+            OrderProduct orderProduct = new OrderProduct(newOrder, product);
+            orderProductData.save(orderProduct);
+        }   
+
+        CompleteOrder newCompleteOrder = new CompleteOrder(completeOrder.getCustomerId(), completeOrder.getProductNames());
+
+        return new ResponseEntity<>(newCompleteOrder, HttpStatus.CREATED);
+    }
+
     @RequestMapping("/customerOrders")
     public CustOrderList allCustOrders() {
         List<CustomerOrder> all = customerOrderData.findAll();
@@ -86,11 +110,10 @@ public class MainRestController {
         String productName = orderProduct.getProduct().getProductName();
         Product product = productData.findByProductName(productName);
 
-
         OrderProduct newOrderProduct = new OrderProduct(customerOrder, product);
 
         orderProductData.save(orderProduct);
-        
+
         return new ResponseEntity<>(newOrderProduct, HttpStatus.CREATED);
     }
 
@@ -100,9 +123,17 @@ public class MainRestController {
         return new ProductList(all);
     }
 
-    @PostMapping("/product")
-    public ResponseEntity<Product> createNewProduct(@RequestBody Product product) {
-        productData.save(product);
-        return new ResponseEntity<>(product, HttpStatus.CREATED);
+    @PostMapping("/addProducts")
+    public ResponseEntity<Object> createNewProducts(@RequestBody List<Product> products) {
+        if (products.size() == 1) {
+            // If only one product is provided, save it and return
+            Product singleProduct = products.get(0);
+            productData.save(singleProduct);
+            return new ResponseEntity<>(singleProduct, HttpStatus.CREATED);
+        } else {
+            // If multiple products are provided, save them and return
+            List<Product> savedProducts = productData.saveAll(products);
+            return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
+        }
     }
 }
