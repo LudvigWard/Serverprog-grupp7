@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 Database.mv.db
-/Database.trace.db
+Database.trace.db
 
 ### STS ###
 .apt_generated
