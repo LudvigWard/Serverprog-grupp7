@@ -56,26 +56,18 @@ public class MainRestController {
 
     @PostMapping("/addCustomerOrder")
     public ResponseEntity<CustomerOrder> createNewCustOrder(@RequestBody CustomerOrder customerOrder) {
-        Customer customer = customerData.findById(customerOrder.getCustomer().getCustomerId())
+        Long customerId = customerOrder.getCustomer().getCustomerId(); // Extract customerId from the incoming
+                                                                       // CustomerOrder
+        Customer customer = customerData.findById(customerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
 
-        customerOrder.setCustomer(customer);
-        customerOrderData.save(customerOrder);
-        return new ResponseEntity<>(customerOrder, HttpStatus.CREATED);
-    }
+        // Create a new Customer object using the retrieved customer
+        CustomerOrder newOrder = new CustomerOrder(customer);
 
-    // Endpoint for adding multiple customer orders
-    @PostMapping("/addMultipleCustomerOrders")
-    public ResponseEntity<List<CustomerOrder>> createNewCustOrders(@RequestBody List<CustomerOrder> customerOrders) {
-        List<CustomerOrder> savedOrders = new ArrayList<>();
-        for (CustomerOrder order : customerOrders) {
-            Customer customer = customerData.findById(order.getCustomer().getCustomerId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
-            order.setCustomer(customer);
-            savedOrders.add(order);
-        }
-        savedOrders = customerOrderData.saveAll(savedOrders);
-        return new ResponseEntity<>(savedOrders, HttpStatus.CREATED);
+        // Save the new CustomerOrder
+        customerOrderData.save(newOrder);
+
+        return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
     }
 
     @RequestMapping("/orderProducts")
@@ -87,23 +79,14 @@ public class MainRestController {
     @PostMapping("/addOrderProduct")
     public ResponseEntity<OrderProduct> createNewOrderProduct(@RequestBody OrderProduct orderProduct) {
         customerOrderData.save(orderProduct.getCustomerOrder());
-        productData.save(orderProduct.getProduct());
-        orderProductData.save(orderProduct);
-        return new ResponseEntity<>(orderProduct, HttpStatus.CREATED);
-    }
 
-    // Endpoint for adding multiple order products in a batch
-    @PostMapping("/addMultipleOrderProducts")
-    public ResponseEntity<List<OrderProduct>> createNewOrderProductsBatch(
-            @RequestBody List<OrderProduct> orderProducts) {
-        List<OrderProduct> savedProducts = new ArrayList<>();
-        for (OrderProduct product : orderProducts) {
-            customerOrderData.save(product.getCustomerOrder());
-            productData.save(product.getProduct());
-            savedProducts.add(product);
-        }
-        savedProducts = orderProductData.saveAll(savedProducts);
-        return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
+        String productName = orderProduct.getProduct().getProductName();
+        Product product = productData.findByProductName(productName);
+
+        OrderProduct newOrderProduct = new OrderProduct(orderProduct.getCustomerOrder(), product);
+
+        orderProductData.save(orderProduct);
+        return new ResponseEntity<>(newOrderProduct, HttpStatus.CREATED);
     }
 
     @RequestMapping("/products")
@@ -117,12 +100,4 @@ public class MainRestController {
         productData.save(product);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
-
-    // Endpoint for adding multiple products
-    @PostMapping("/addMultipleProducts")
-    public ResponseEntity<List<Product>> createNewProducts(@RequestBody List<Product> products) {
-        List<Product> savedProducts = productData.saveAll(products);
-        return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
-    }
-
 }
