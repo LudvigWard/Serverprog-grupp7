@@ -57,7 +57,7 @@ Man kan få info om alla tabeller med dessa Url-er i ett GET-anrop:
 
 ### Tabell UI
 Man kan även kika på tabellerna i ett UI online via dessa länkar:
-#### http://localhost:8080/website/store/customers
-#### http://localhost:8080/website/store/customerOrders
-#### http://localhost:8080/website/store/orderProducts
-#### http://localhost:8080/website/store/products
+#### http://localhost:8080/website/store/customers.html
+#### http://localhost:8080/website/store/customerOrders.html
+#### http://localhost:8080/website/store/orderProducts.html
+#### http://localhost:8080/website/store/products.html
